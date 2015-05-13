@@ -1798,6 +1798,31 @@ class DescargaSAT(object):
             self.status('Desconectado...')
             self.browser = None
 
+    def searchRequest(self,
+        rfc='',
+        ciec='',
+        facturas_emitidas=False,
+        uuid='',
+        rfc_emisor='',
+        año=None,
+        mes=None,
+        día='00',
+        mes_completo_por_día=False,
+        carpeta_destino='/tmp/'):
+        'Busca y regresa los resultados'
+        self.status('Buscando...')
+        if uuid:
+            self.searchByUUID(rfc, ciec, uuid, carpeta_destino)
+
+    def searchByUUID(self, rfc, ciec, uuid, carpeta_destino):
+        servicio = ServicioCfdi(rfc, ciec)
+        if servicio.descargar_folio(carpeta_destino + "/", uuid):
+            descargados = servicio.lista_cfdis()
+            status = "XML Descargados: " + str(len(descargados))
+        else:
+            status = "Ha ocurrido el siguiente error: " + servicio.error()
+        self.status(status)
+
     def search(self,
         facturas_emitidas=False,
         uuid='',
